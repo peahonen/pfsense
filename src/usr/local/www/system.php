@@ -85,6 +85,7 @@ $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['system
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
+$pconfig['dnsactivetieronly'] = isset($config['system']['dnsactivetieronly']);
 //$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['roworderdragging'] = isset($config['system']['webgui']['roworderdragging']);
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
@@ -354,6 +355,12 @@ if ($_POST) {
 			unset($config['system']['dnslocalhost']);
 		}
 
+		if ($_POST['dnsactivetieronly'] == "yes") {
+			$config['system']['dnsactivetieronly'] = true;
+		} else {
+			unset($config['system']['dnsactivetieronly']);
+		}
+
 		/* which interface should the dns servers resolve through? */
 		$dnscounter = 0;
 		// The $_POST array key of the DNS IP (starts from 0)
@@ -606,6 +613,14 @@ $section->addInput(new Form_Checkbox(
 	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
 	'listen on localhost, so system can use the local DNS service to perform '.
 	'lookups. Checking this box omits localhost from the list of DNS servers in resolv.conf.');
+
+$section->addInput(new Form_Checkbox(
+	'dnsactivetieronly',
+	'Active interfaces only',
+	'Use DNS servers acquired from active interfaces only',
+	$pconfig['dnsactivetieronly']
+))->setHelp('By default in multi-WAN setup DNS servers from all interfaces are being used. This can generate DNS traffic on an otherwise idle secondary tier interface. '.
+	'With this option set, only the DNS-servers for active interfaces will be used. This can help eliminate unnecessary traffic on a metered backup WAN interface.');
 
 $form->add($section);
 

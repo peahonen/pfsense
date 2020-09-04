@@ -216,15 +216,17 @@ function get_dns_glob_pattern() {
         $dns_interfaces = array();
         $dns_glob_pattern = "*"; // default to using all interfaces
 
-        // get current gateway groups state
-        $gwgroups = return_gateway_groups_array();
-        foreach ($gwgroups as $group) {
-		if (count($group) > 0) {
-			$dns_interfaces[]=$group[0]['int']; // one active tier at a time
-		        // update the glob pattern,
-                        $dns_glob_pattern="{".implode(",",array_unique($dns_interfaces))."}";
+	if(isset($config['system']['dnsactivetieronly'])) {
+	        // get current gateway groups state
+		$gwgroups = return_gateway_groups_array();
+		foreach ($gwgroups as $group) {
+			if (count($group) > 0) {
+			   $dns_interfaces[]=$group[0]['int']; // one active tier at a time
+		           // update the glob pattern,
+                           $dns_glob_pattern="{".implode(",",array_unique($dns_interfaces))."}";
+			}
 		}
-        }
+	}
 	return $dns_glob_pattern;
 }
 
